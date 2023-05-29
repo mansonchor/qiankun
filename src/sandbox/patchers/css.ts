@@ -166,7 +166,7 @@ export class ScopedCSS {
           });
         }
 
-        return `${p}${prefix} ${s.replace(/^ */, '')}`;
+        return `${p}${prefix} ${s.replace(/^ */, '')} ${p}${prefix}${s.replace(/^ */, '')}`;
       }),
     );
 
