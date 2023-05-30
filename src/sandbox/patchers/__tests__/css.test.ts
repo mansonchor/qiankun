@@ -35,13 +35,17 @@ const removeWs = (s: string | null) => {
   return s.replace(re, '');
 };
 
-test('should add attribute selector correctly', () => {
-  const actualValue = '.react15-main {display: flex; flex-direction: column; align-items: center;}';
+test.only('should add attribute selector correctly', () => {
+  // const actualValue = '.react15-main {display: flex; flex-direction: column; align-items: center;}';
+  const actualValue = 'a, .el-link { color: blue }';
   const expectValue =
     'div[data-qiankun="react15"] .react15-main {display: flex; flex-direction: column; align-items: center;}';
 
   const styleNode = fakeStyleNode(actualValue);
   CSSProcessor.process(styleNode, 'div[data-qiankun="react15"]');
+  console.log('========= start styleNode.textContent =========');
+console.log(styleNode.textContent);
+console.log('========= end =========');
 
   expect(removeWs(styleNode.textContent)).toBe(removeWs(expectValue));
 });

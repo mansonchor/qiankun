@@ -115,9 +115,12 @@ export class ScopedCSS {
   // html, body {}
 
   // eslint-disable-next-line class-methods-use-this
-  private ruleStyle(rule: CSSStyleRule, prefix: string) {
+  private ruleStyle(rule: CSSStyleRule, oriPrefix: string) {
     const rootSelectorRE = /((?:[^\w\-.#]|^)(body|html|:root))/gm;
     const rootCombinationRE = /(html[^\w{[]+)/gm;
+
+    // change prefix div[data-qiankun="xxx"] => *[data-qiankun="xxx"]
+    const prefix = oriPrefix.replace('div[', '*[');
 
     const selector = rule.selectorText.trim();
 
@@ -144,6 +147,7 @@ export class ScopedCSS {
     // handle grouping selector, a,span,p,div { ... }
     cssText = cssText.replace(/^[\s\S]+{/, (selectors) =>
       selectors.replace(/(^|,\n?)([^,]+)/g, (item, p, s) => {
+        
         // handle div,body,span { ... }
         if (rootSelectorRE.test(item)) {
           return item.replace(rootSelectorRE, (m) => {
@@ -159,7 +163,14 @@ export class ScopedCSS {
           });
         }
 
-        return `${p}${prefix} ${s.replace(/^ */, '')} ${p}${prefix}${s.replace(/^ */, '')}`;
+        if (s.trim().startsWith('.') || s.trim().startsWith('#')) {
+          // ex: .className { color: blue } => div[data-qiankun="xxx"] .className, div[data-qiankun="xxx"].className { color: blue }
+          return `${p}${prefix} ${s.replace(/^ */, '').replace(/\{/, '')}${p === ',' ? p : ','}${prefix}${s.replace(/^ */, '')}`;
+        }
+
+        // 如果 css 选择器不是类名
+        // ex: a { color: blue } => div[data-qiankun="xxx"] a { color: blue }
+        return `${p}${prefix} ${s.replace(/^ */, '')}`;
       }),
     );
 
