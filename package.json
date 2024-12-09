@@ -92,7 +92,8 @@
   },
   "resolutions": {
     "@types/history": "^4.x",
-    "@types/react": "^17.x"
+    "@types/react": "^17.x",
+    "path-to-regexp": "1.7.0"
   },
   "dependencies": {
     "@babel/runtime": "^7.10.5",
